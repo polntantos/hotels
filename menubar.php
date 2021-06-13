@@ -7,7 +7,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="index.php?page=home.php"> home</a>
+                    <a class="nav-link" href="index.php?page=home.php">Ηome</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="index.php?page=hotelindex.php">Hotels</a>

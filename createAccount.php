@@ -22,7 +22,7 @@
                 <input class="form-control" id="confirmpswd" type="password" name="confirmpswd" value="" />
             </div>
             <button type="submit" class="btn btn-primary">Register</button>
-            <a href="index.php?page=createAccount.php"> or Login</a>
+            <a href="index.php?page=login.php"> or Login</a>
         </form>
     </div>
 </div>

@@ -10,9 +10,6 @@
                     <a class="nav-link" href="index.php?page=home.php"> home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="index.php?page=rar.php">rooms and reservations</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="index.php?page=hotelindex.php">Hotels</a>
                 </li>
                 <?php

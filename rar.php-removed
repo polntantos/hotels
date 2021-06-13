@@ -1,0 +1,56 @@
+
+<form action = "searchrooms.php" method = "GET">
+select date
+<?php if(isset($_SESSION["lastsearch"])){
+    $lastsearch=$_SESSION["lastsearch"];
+    $defstartdate = $lastsearch["startdate"];
+    $defenddate = $lastsearch["enddate"];
+    $defpersons = $lastsearch["persons"];
+    $defbeds = $lastsearch["beds"];
+    
+}?>
+from: <input type="date" name="from" <?php if(isset($defstartdate)){ echo 'value="'.$defstartdate.'"'; }?> >
+to: <input type="date" name="to" <?php if(isset($defenddate)){ echo 'value="'.$defenddate.'"'; }?> >
+persons<select name="persons" <?php if(isset($defpersons)){ echo 'autocomplete="'.$defpersons.'"'; } ?>>
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+    
+</select>
+beds<select name="beds" <?php if(isset($defbeds)){ echo 'autocomplete="'.$defbeds.'"'; } ?>>
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+</select>
+
+<input type="submit" name="search" value="search">
+</form>
+
+<?php
+if(isset($_SESSION["results"])){
+    echo '<table border="1" cellpadding="2">
+    <thead>
+        <tr>
+            <th>type</th>
+            <th>rooms available</th>
+            <th>price per day</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>';
+    $results=$_SESSION["results"];
+    foreach ($results as $value) {
+        $roomtype=$value["type"];
+        $roomsav=$value["rav"];
+        $pricepn=$value["price"];
+        echo '<tr>';
+        echo "<td>$roomtype</td>";
+        echo "<td>$roomsav</td>";
+        echo "<td>$pricepn</td>";
+        echo '<td><a href="makeReservation.php?roomtype='.$roomtype.'">reserve</a></td>';
+        echo '</tr>';
+    }
+    echo '</tbody></table>';  
+}

@@ -1,0 +1,43 @@
+<?php
+    if($_SESSION["loggedin"]!=true){
+        $newURL="index.php?page=login.php";
+        $msg="logfirst";
+        header('Location: '.$newURL.'&msg='.$msg);
+    }
+    session_start();
+    require 'dbconf.php';
+    $roomtype=$_GET["roomtype"];
+    $userid=$_SESSION["userid"];
+    $lastsearch=$_SESSION["lastsearch"];
+    $startdate = $lastsearch["startdate"];
+    $enddate = $lastsearch["enddate"];
+    $persons = $lastsearch["persons"];
+    $beds = $lastsearch["beds"];
+    
+    $sqlquery = "select roomid from rooms "
+            . "where numofper='".$persons."' and numofbeds='".$beds."' "
+            . "and roomid not in (select rooms_roomid from reservations "
+            . "where startdate between '".$startdate."' and '".$enddate."' "
+            . "or enddate between '".$startdate."' and '".$enddate."')";
+    $stmt=$conn->prepare($sqlquery);
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $idsroomsav=($stmt->fetchAll());
+    $roomid=$idsroomsav[0]["roomid"];
+    
+    
+    $sql =" insert into `mydb`.`reservations`(`user_userid`,`rooms_roomid`,`startdate`,`enddate`,`confirmed`,`create_time`) "
+            . "values ('$userid','$roomid','$startdate','$enddate','N',current_timestamp())";
+
+    try{
+            $conn->exec($sql);
+            
+        } catch (PDOException $e){
+            $msg=$e->getMessage();
+            $expected_error_message="SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '".$roomid."' for key 'email'";
+            if($msg==$expected_error_message){
+                echo '<h1>please try to make a different reservation or contact us</h1>';
+            }
+        }
+    $_SESSION["results"]=null;
+    $_SESSION["lastsearch"]=null;

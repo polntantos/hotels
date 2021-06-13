@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 $call_name = htmlspecialchars($_GET["call_name"]);
 
@@ -8,26 +9,61 @@ switch ($call_name) {
     case 'test_ajax_call':
         test_ajax_call($param);
         break;
+    case 'hotel_save':
+        hotel_save();
+        break;
 }
 
 function test_ajax_call()
 {
     //do something and return result
 
-    return 'answer';
+    echo 'answer';
 }
 
-//It's ajax we don't redirect only answer preferably in JSON format
-/* 
-    // use exec() because no results are returned
+function hotel_save()
+{
+    require 'dbconf.php';
 
-$sql = "INSERT INTO `mydb`.`user` (`fname`, `lname`, `email`, `password`, `create_time`) VALUES ('" . $newfname . "', '" . $newlname . "', '" . $newemail . "', '" . $newpasswd . "', NULL)";
+    $hotelid = $_POST['hotelid'];
+    $hotelname = $_POST['hotel_name'];
+    $stars = $_POST['stars'];
+    $location = $_POST['location'];
+    $description = $_POST['description'];
+    $city = $_POST['city'];
+
+    $longitude = (isset($_POST['longitude'])) ? $_POST['longitude'] : '0';
+
+    $latitude = (isset($_POST['latitude'])) ? $_POST['latitude'] : '0';
+
+    $phonenumber = $_POST['phonenumber'];
+
+    if (isset($hotelid) && !empty($hotelid)) {
+        $sql = "UPDATE `mydb`.`hotels` SET `hotelname` = '$hotelname', `hotelstar` = '$stars', `location` = '$location', `description` = '$description', `longitude` = '$longitude', `latitude` = '$latitude', `nomoi_nomoiid` = '$city', `phonenumber` = '$phonenumber' WHERE `hotelid` = '$hotelid';";
+    } else {
+        $sql = "INSERT INTO `mydb`.`hotels` (`hotelname`, `hotelstar`, `location`, `description`, `longitude`, `latitude`, `nomoi_nomoiid`,`phonenumber`) VALUES ( '$hotelname', '$stars', '$description', '$location', '$longitude', '$latitude', '$city', '$phonenumber');";
+    }
+
+
     try {
-        $conn->exec($sql);
+        $stmt = $conn->exec($sql);
+
+        $hotel_id = $conn->lastInsertId();
     } catch (PDOException $e) {
-        $msg = $e->getMessage();
-        $expected_error_message = "SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '" . $newemail . "' for key 'email'";
-        if ($msg == $expected_error_message) {
-            echo '<h1>email already in use please <a href="index.php?page=login.php"> log in </a></h1>';
-        }
-    } */
+        echo $e->getMessage();
+        die();
+    }
+    $userid = $_SESSION["userid"];
+
+    $usersql = "UPDATE `mydb`.`user` SET `hotels_hotelid` = '$hotel_id' WHERE (`userid` = '$userid');";
+    $stmt = $conn->prepare($usersql);
+    // die();
+    try {
+        $stmt->execute();
+        $_SESSION['hotel_id'] = $hotel_id;
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+    $newURL = "index.php?page=hotelindex.php";
+    header('Location: ' . $newURL);
+}

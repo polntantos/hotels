@@ -5,7 +5,7 @@ $useremail = $_POST['email'];
 $userpasswd = htmlspecialchars_decode(trim($_POST['password']));
 
 
-$sqlquery = "select userid,fname,lname,email,password from user where email='" . $useremail . "'";
+$sqlquery = "select userid,fname,lname,email,password,hotels_hotelid from user where email='" . $useremail . "'";
 $stmt = $conn->prepare($sqlquery);
 $stmt->execute();
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -19,6 +19,7 @@ if (isset($result[0]) && password_verify($userpasswd, $result[0]['password'])) {
     $_SESSION["fname"] = $userdata['fname'];
     $_SESSION["lname"] = $userdata['lname'];
     $_SESSION["email"] = $userdata['email'];
+    $_SESSION["hotel_id"] = $userdata['hotels_hotelid'];
     $newURL = "index.php?page=home.php";
     header('Location: ' . $newURL);
     die();
@@ -26,7 +27,7 @@ if (isset($result[0]) && password_verify($userpasswd, $result[0]['password'])) {
     if (isset($_SESSION["failedat"])) {
         $_SESSION["failedat"]++;
         $newURL = "index.php?page=login.php";
-        echo $userpasswd . '->' . $result[0]['password'];
+
         header('Location: ' . $newURL);
     } else {
         $_SESSION["failedat"] = 1;
